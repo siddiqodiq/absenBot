@@ -9,7 +9,7 @@ import logging
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.request import HTTPXRequest
 
-from config import BOT_TOKEN
+from config import BOT_TOKEN, TARGET_CHAT_ID, TARGET_THREAD_ID
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +24,12 @@ registered_chats: set[tuple[int, int | None]] = set()
 # ── Status absensi in-memory per target ────────────────────────────────────────
 # Format: {(chat_id, message_thread_id): {"morning": False, "evening": False}}
 attendance: dict[tuple[int, int | None], dict[str, bool]] = {}
+
+# Otomatis daftarkan target chat utama
+if TARGET_CHAT_ID:
+    _target = (TARGET_CHAT_ID, TARGET_THREAD_ID)
+    registered_chats.add(_target)
+    attendance[_target] = {"morning": False, "evening": False}
 
 
 def register_chat(chat_id: int, message_thread_id: int | None = None) -> None:
