@@ -114,6 +114,8 @@ async def _run_holiday_announcement(holiday_name: str) -> None:
     """Wrapper untuk menjalankan fungsi pengumuman libur."""
     await send_holiday_announcement(holiday_name)
 
+import pytz
+
 async def daily_check() -> None:
     """
     Pengecekan harian pada pukul 00:00 WIB.
@@ -124,7 +126,8 @@ async def daily_check() -> None:
     """
     reset_attendance()
 
-    today = datetime.now().astimezone()
+    tz = pytz.timezone(TIMEZONE)
+    today = datetime.now(tz)
 
     # Cek hari kerja (0=Senin, 6=Minggu)
     weekday = today.weekday()
