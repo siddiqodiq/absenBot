@@ -149,7 +149,7 @@ async def send_holiday_announcement(holiday_name: str) -> None:
         return
 
     text = (
-        f"🎉 *Hari Libur Nasional*\n"
+        f"🎉 *Hari Libur*\n"
         f"\n"
         f"Hari ini adalah: *{holiday_name}*\n"
         f"Tidak ada pengingat absensi hari ini\\. Selamat berlibur\\!"

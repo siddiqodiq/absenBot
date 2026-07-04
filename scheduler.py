@@ -64,7 +64,7 @@ def _schedule_morning_jobs() -> None:
     scheduler.add_job(
         _run_async_reminder,
         CronTrigger(
-            hour="7-23",
+            hour="7-11",
             minute="0,5,10,15,20,25,30,35,40,45,50,55",
             timezone=TIMEZONE,
         ),
@@ -93,7 +93,7 @@ def _schedule_evening_jobs() -> None:
     scheduler.add_job(
         _run_async_reminder,
         CronTrigger(
-            hour="16-23",
+            hour="16-21",
             minute="0,10,20,30,40,50",
             timezone=TIMEZONE,
         ),
@@ -132,9 +132,19 @@ async def daily_check() -> None:
     # Cek hari kerja (0=Senin, 6=Minggu)
     weekday = today.weekday()
     if weekday >= 5:  # Sabtu atau Minggu
-        logger.info("Hari ini weekend (%s). Tidak ada reminder.", today.strftime("%A"))
+        weekend_name = "Hari Sabtu" if weekday == 5 else "Hari Minggu"
+        logger.info("Hari ini weekend (%s). Tidak ada reminder, mengirim sapaan.", weekend_name)
         _remove_jobs_by_prefix(MORNING_TAG)
         _remove_jobs_by_prefix(EVENING_TAG)
+        
+        # Jadwalkan pengumuman akhir pekan pada pukul 07:15
+        scheduler.add_job(
+            _run_holiday_announcement,
+            CronTrigger(hour=7, minute=15, timezone=TIMEZONE),
+            id="weekend_announcement",
+            args=[f"Akhir Pekan {weekend_name}"],
+            replace_existing=True,
+        )
         return
 
     # Cek hari libur nasional
